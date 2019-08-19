@@ -1,18 +1,17 @@
 package com.example.android.trackmysleepquality.sleeptracker
 
 import androidx.recyclerview.widget.DiffUtil
-import com.example.android.trackmysleepquality.database.SleepNight
 
 /**
  * Created by Belema Ogan on 2019-08-19.
  */
-class SleepNightDiffCallback : DiffUtil.ItemCallback<SleepNight>() {
+class SleepNightDiffCallback : DiffUtil.ItemCallback<DataItem>() {
 
-    override fun areItemsTheSame(oldItem: SleepNight, newItem: SleepNight): Boolean {
-        return oldItem.nightId == newItem.nightId
+    override fun areItemsTheSame(oldItem: DataItem, newItem: DataItem): Boolean {
+        return oldItem.id == newItem.id
     }
 
-    override fun areContentsTheSame(oldItem: SleepNight, newItem: SleepNight): Boolean {
+    override fun areContentsTheSame(oldItem: DataItem, newItem: DataItem): Boolean {
         return oldItem == newItem
     }
 

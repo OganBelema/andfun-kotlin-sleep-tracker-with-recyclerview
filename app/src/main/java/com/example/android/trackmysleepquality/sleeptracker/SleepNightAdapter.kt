@@ -18,17 +18,62 @@ package com.example.android.trackmysleepquality.sleeptracker
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.example.android.trackmysleepquality.database.SleepNight
+import kotlinx.coroutines.*
+import java.lang.ClassCastException
 
-class SleepNightAdapter(private val clickListener: SleepNightItemClickListener) : ListAdapter<SleepNight, SleepNightItemViewHolder>(SleepNightDiffCallback()){
+private const val ITEM_VIEW_TYPE_HEADER = 0
+private const val ITEM_VIEW_TYPE_ITEM = 1
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SleepNightItemViewHolder {
-        return SleepNightItemViewHolder.from(parent)
+class SleepNightAdapter(private val clickListener: SleepNightItemClickListener) :
+        ListAdapter<DataItem, RecyclerView.ViewHolder>(SleepNightDiffCallback()){
+
+    private val parentJob = Job()
+
+    private val adapterScope = CoroutineScope(Dispatchers.Default + parentJob)
+
+    override fun getItemViewType(position: Int): Int {
+        return when (getItem(position)) {
+            is DataItem.Header -> ITEM_VIEW_TYPE_HEADER
+            is DataItem.SleepNightItem -> ITEM_VIEW_TYPE_ITEM
+        }
     }
 
-    override fun onBindViewHolder(holder: SleepNightItemViewHolder, position: Int) {
-        val item = getItem(position)
-        holder.bind(item, clickListener)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when(viewType){
+            ITEM_VIEW_TYPE_HEADER -> TextViewHolder.from(parent)
+            ITEM_VIEW_TYPE_ITEM -> SleepNightItemViewHolder.from(parent)
+            else -> throw ClassCastException("Unknown viewType $viewType")
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when(holder){
+            is SleepNightItemViewHolder -> {
+                val sleepNightItem = getItem(position) as DataItem.SleepNightItem
+                holder.bind(sleepNightItem.sleepNight, clickListener)
+            }
+        }
+    }
+
+    fun addHeaderAndSubmitList(list: List<SleepNight>?){
+        adapterScope.launch {
+            val items = when(list){
+                null -> listOf(DataItem.Header)
+                //add header to list and return list of DataItems
+                else -> listOf(DataItem.Header) + list.map { DataItem.SleepNightItem(it) }
+            }
+
+            withContext(Dispatchers.Main){
+                submitList(items)
+            }
+        }
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        parentJob.cancel()
+        super.onDetachedFromRecyclerView(recyclerView)
     }
 
 }

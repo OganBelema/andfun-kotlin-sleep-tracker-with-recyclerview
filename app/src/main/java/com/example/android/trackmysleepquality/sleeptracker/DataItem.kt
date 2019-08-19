@@ -1,4 +1,4 @@
-package com.example.android.trackmysleepquality
+package com.example.android.trackmysleepquality.sleeptracker
 
 import com.example.android.trackmysleepquality.database.SleepNight
 
