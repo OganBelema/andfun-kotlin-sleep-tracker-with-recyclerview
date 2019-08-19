@@ -128,6 +128,18 @@ class SleepTrackerViewModel(
         _navigateToSleepQuality.value = null
     }
 
+    private val _navigateToSleepDetail = MutableLiveData<Long>()
+    val navigateToSleepDetail: LiveData<Long>
+        get() = _navigateToSleepDetail
+
+    fun onSleepNightItemClicked(sleepNightId: Long){
+        _navigateToSleepDetail.value = sleepNightId
+    }
+
+    fun doneNavigatingToSleepDetail() {
+        _navigateToSleepDetail.value = null
+    }
+
     init {
         initializeTonight()
     }
