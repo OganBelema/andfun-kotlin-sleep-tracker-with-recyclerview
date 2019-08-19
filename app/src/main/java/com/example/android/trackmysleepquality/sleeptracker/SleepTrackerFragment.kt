@@ -66,6 +66,16 @@ class SleepTrackerFragment : Fragment() {
 
         val layoutManager = GridLayoutManager(context, 3)
 
+        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return when(position){
+                    0 -> 3
+                    else -> 1
+                }
+            }
+
+        }
+
         binding.sleepList.layoutManager = layoutManager
 
         // Add an Observer on the state variable for showing a Snackbar message
