@@ -13,8 +13,9 @@ class SleepNightItemViewHolder private constructor(
         private val listItemSleepNightBinding: ListItemSleepNightBinding):
         RecyclerView.ViewHolder(listItemSleepNightBinding.root) {
 
-    fun bind(sleepNight: SleepNight) {
+    fun bind(sleepNight: SleepNight, clickListener: SleepNightItemClickListener) {
         listItemSleepNightBinding.sleepNight = sleepNight
+        listItemSleepNightBinding.clickListener = clickListener
         listItemSleepNightBinding.executePendingBindings()
 
     }
