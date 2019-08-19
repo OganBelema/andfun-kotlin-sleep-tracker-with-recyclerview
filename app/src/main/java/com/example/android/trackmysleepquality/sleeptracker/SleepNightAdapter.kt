@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.android.trackmysleepquality.database.SleepNight
 import kotlinx.coroutines.*
 import java.lang.ClassCastException
+import java.lang.IllegalArgumentException
 
 private const val ITEM_VIEW_TYPE_HEADER = 0
 private const val ITEM_VIEW_TYPE_ITEM = 1
@@ -68,6 +69,14 @@ class SleepNightAdapter(private val clickListener: SleepNightItemClickListener) 
             withContext(Dispatchers.Main){
                 submitList(items)
             }
+        }
+    }
+
+    fun getSpanSize(position: Int):Int{
+        return when(getItem(position)){
+            is DataItem.Header -> 3
+            is DataItem.SleepNightItem -> 1
+            else -> throw IllegalArgumentException("Unknown data type")
         }
     }
 

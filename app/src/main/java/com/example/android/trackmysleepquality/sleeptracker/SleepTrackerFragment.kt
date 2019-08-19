@@ -64,14 +64,15 @@ class SleepTrackerFragment : Fragment() {
 
         binding.lifecycleOwner = this
 
+        val adapter = SleepNightAdapter(SleepNightItemClickListener { sleepNightId ->
+            sleepTrackerViewModel.onSleepNightItemClicked(sleepNightId)
+        })
+
         val layoutManager = GridLayoutManager(context, 3)
 
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
-                return when(position){
-                    0 -> 3
-                    else -> 1
-                }
+                return adapter.getSpanSize(position)
             }
 
         }
@@ -110,10 +111,6 @@ class SleepTrackerFragment : Fragment() {
                 // has a configuration change.
                 sleepTrackerViewModel.doneNavigating()
             }
-        })
-
-        val adapter = SleepNightAdapter(SleepNightItemClickListener { sleepNightId ->
-            sleepTrackerViewModel.onSleepNightItemClicked(sleepNightId)
         })
 
         sleepTrackerViewModel.navigateToSleepDetail.observe(this, Observer {
